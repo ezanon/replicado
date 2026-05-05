@@ -69,7 +69,7 @@ class Convenio extends ReplicadoBase {
     
 
     /**
-     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * Compatível com o antigo eCONVENIOS do Mercurio
      * 
      * Método para listar convênios acadêmicos internacionais.
      *
@@ -132,7 +132,7 @@ class Convenio extends ReplicadoBase {
     }
 
     /**
-     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * Compatível com o antigo eCONVENIOS do Mercurio
      * 
      * Método para listar os responsáveis vinculados a um convênio específico.
      *
@@ -159,7 +159,7 @@ class Convenio extends ReplicadoBase {
     }
 
     /**
-     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * Compatível com o antigo eCONVENIOS do Mercurio
      * 
      * Método para listar as organizações externas vinculadas a um convênio específico.
      *
