@@ -23,7 +23,7 @@ class Beneficio extends ReplicadoBase
     /**
      * Retorna a lista de monitores da sala Pró-Aluno
      *
-     * @param Array $codigoSalaMonitor
+     * @param string $codigoSalaMonitor
      * @return Array
      * @author Leandro Ramos, em 28/4/2025
      */
@@ -41,10 +41,6 @@ class Beneficio extends ReplicadoBase
             "Beneficio.listarMonitoresProAluno.sql",
             $replaces
         );
-
-        $param = [
-            "codslamon" => $codigoSalaMonitor,
-        ];
 
         return DB::fetchAll($query);
     }

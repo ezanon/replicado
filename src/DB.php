@@ -5,7 +5,6 @@ namespace Uspdev\Replicado;
 use PDO;
 use SplFileInfo;
 use Throwable;
-use Uspdev\Cache\Cache;
 use Uspdev\Replicado\Replicado as Config;
 
 class DB
@@ -100,7 +99,7 @@ class DB
         $query = SELF::automaticReplaces($query);
         $stmt = SELF::getInstance()->prepare($query);
         foreach ($param as $campo => $valor) {
-            $valor = $config->sybase ? utf8_decode($valor) : $valor;
+            $valor = $config->sybase ? mb_convert_encoding($valor, "ISO-8859-1", "UTF-8") : $valor;
             $stmt->bindValue(":$campo", $valor);
             if ($config->debugLevel >= 2) {
                 $queryLog = str_replace(":$campo", $valor, $queryLog ?? $query);

@@ -89,9 +89,9 @@ class Uteis
 
     public static function utf8_converter($array)
     {
-        array_walk_recursive($array, function (&$item, $key) {
+        array_walk_recursive($array, function (&$item) {
             if (!mb_detect_encoding($item, 'utf-8', true)) {
-                $item = utf8_encode($item);
+                $item = mb_convert_encoding($item, "ISO-8859-1", "UTF-8");
             }
         });
         return $array;
@@ -99,7 +99,7 @@ class Uteis
 
     public static function trim_recursivo($array)
     {
-        array_walk_recursive($array, function (&$item, $key) {
+        array_walk_recursive($array, function (&$item) {
             $item = trim($item);
         });
         return $array;
@@ -158,7 +158,7 @@ class Uteis
 
     /**
      * Gets the value of an environment variable. Supports boolean, empty and null.
-     * 
+     *
      * Adaptado de env() do Laravel
      *
      * @param string $key
