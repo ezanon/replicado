@@ -2,10 +2,75 @@
 
 namespace Uspdev\Replicado;
 
-class Convenio extends ReplicadoBase
-{
+class Convenio extends ReplicadoBase {
 
     /**
+     * Compatível com o novo sistema CONVENIOS do Portal USP 
+     * 
+     * Método para listar convênios acadêmicos ativos
+     * 
+     * O parâmetro $codtipasu são os valores para os diversos tipos de convênios.
+     * 
+     * Para obter estes códigos de tipo de convênio:
+     * SELECT DISTINCT codtipasu, dsccvn FROM CVCONVENIO ORDER BY codtipasu;
+     * 
+     * @param array $codtipasuArray - Define os tipos de convênios requeridos
+     * @return array - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
+     *  [codcvn, nomeConvenio, tipoConvenio, coordenadores, dataInicio, dataFim]
+     * @author Erickson Zanon @ezanon
+     * 
+     */
+    protected static function _listarConveniosAcademicosAprovadosUSP(array $codtipasuArray = [23, 27]) {
+        $codtipasu = implode(',',$codtipasuArray);
+        $query = DB::getQuery('Convenio.listarConveniosAcademicosAprovadosUSP.sql');
+        $query = str_replace('__codtipasu__',$codtipasu,$query);     
+        $convenios = DB::fetchAll($query);
+        // 🔹 Converte datas (mantendo compatibilidade MSSQL/Sybase)
+        foreach ($convenios as $key => $conv) {
+            $convenios[$key]['dataInicio'] = !empty($conv['dataInicio']) ? date('d/m/Y', strtotime($conv['dataInicio'])) : '—';
+            $convenios[$key]['dataFim'] = !empty($conv['dataFim']) ? date('d/m/Y', strtotime($conv['dataFim'])) : '—';
+            // 🔹 Obtém organizações
+            $orgs = self::_listarOrganizacoesConvenioUSP($convenios[$key]['codcvn']);
+            $convenios[$key]['organizacoes'] = '';
+            foreach ($orgs as $org) {
+                $nomeOrg = $org['nomeOrganizacao'];
+                $convenios[$key]['organizacoes'] .= $convenios[$key]['organizacoes'] == '' ? $nomeOrg : '|' . $nomeOrg;
+            }
+        }
+        return $convenios;
+    }
+    
+     /**
+     * Compatível com o novo sistema CONVENIOS do Portal USP 
+     * Método para listar as organizações de um convênio acadêmico
+     * 
+     * @param array $codcvnusp - código do convênio
+     * @return string - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
+     *  [codcvn, nomeConvenio, tipoConvenio, coordenadores, dataInicio, dataFim]
+     * @author Erickson Zanon @ezanon
+     * 
+     */
+    protected static function _listarOrganizacoesConvenioUSP($codcvnusp) {
+        $query = DB::getQuery('Convenio.listarOrganizacoesConvenioUSP.sql');
+        $params = [
+            'codcvnusp' => $codcvnusp
+        ];
+        $organizacoes = DB::fetchAll($query, $params);
+        return $organizacoes;        
+    }
+    
+/**
+ * 
+ * Abaixo, métodos compatíveis com o eConvenios (Mercúrio)
+ * 
+ * Para dados mais recentes usar os métodos terminados com USP
+ * 
+ */
+    
+
+    /**
+     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * 
      * Método para listar convênios acadêmicos internacionais.
      *
      * Quando o parâmetro $ativos for verdadeiro, carrega apenas convênios ativos,
@@ -25,8 +90,7 @@ class Convenio extends ReplicadoBase
      * @return array - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
      * @author Erickson Zanon <ezanon@gmail.com>
      */
-    protected static function _listarConveniosAcademicosInternacionais($ativos = true)
-    {
+    protected static function _listarConveniosAcademicosInternacionais($ativos = true) {
         // Define qual consulta usar
         if ($ativos) {
             $query = DB::getQuery('Convenio.listarConveniosAcademicosInternacionais.sql');
@@ -67,8 +131,9 @@ class Convenio extends ReplicadoBase
         return $convenios;
     }
 
-
-    /** 
+    /**
+     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * 
      * Método para listar os responsáveis vinculados a um convênio específico.
      *
      * Utiliza a consulta 'Convenios.listarCoordenadoresConvenio.sql' para obter os registros
@@ -94,6 +159,8 @@ class Convenio extends ReplicadoBase
     }
 
     /**
+     * Compatível com o novo antigo eCONVENIOS do Mercurio
+     * 
      * Método para listar as organizações externas vinculadas a um convênio específico.
      *
      * Utiliza a consulta 'Convenios.listarOrganizacoesConvenio.sql' para obter as organizações
