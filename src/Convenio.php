@@ -16,7 +16,7 @@ class Convenio extends ReplicadoBase {
      * 
      * @param array $codtipasuArray - Define os tipos de convênios requeridos
      * @return array - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
-     *  [codcvn, nomeConvenio, tipoConvenio, coordenadores, dataInicio, dataFim]
+     *  [codcvn, nomeConvenio, tipoConvenio, coordenadores, organizacoes separadas por |, dataInicio, dataFim]
      * @author Erickson Zanon @ezanon
      * 
      */
@@ -45,8 +45,7 @@ class Convenio extends ReplicadoBase {
      * Método para listar as organizações de um convênio acadêmico
      * 
      * @param array $codcvnusp - código do convênio
-     * @return string - Retorna um array associativo contendo os convênios, seus coordenadores e organizações.
-     *  [codcvn, nomeConvenio, tipoConvenio, coordenadores, dataInicio, dataFim]
+     * @return array [codcvnusp, codorg, nomeOrganizacao]
      * @author Erickson Zanon @ezanon
      * 
      */
