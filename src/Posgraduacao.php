@@ -166,7 +166,7 @@ class Posgraduacao extends ReplicadoBase
      * Uma mesma disciplina pode ser oferecida para mais de uma área
      * Modificado em 26/1/2022 de forma a não usar mais as datas de inicio/fim.
      * Agora usa as informações da tabela R27DISMINCRE
-     * 
+     *
      * @param int $codare Código da áreada PG.
      * @return array
      *
@@ -192,9 +192,9 @@ class Posgraduacao extends ReplicadoBase
                 AND o.dtacantur IS NULL --data-cancelamento-turma
                 AND o.dtafimofe > GETDATE() --data final futura
             ORDER BY o.sgldis";
-        /* 
+        /*
             -self join com oferecimento para pegar somente as disciplinas listadas em R27DISMINCRE da área
-            -data final futura exclui algumas disciplinas perdidas em OFERECIMENTO 
+            -data final futura exclui algumas disciplinas perdidas em OFERECIMENTO
             */
 
         $param = ['codare' => $codare];
@@ -312,13 +312,13 @@ class Posgraduacao extends ReplicadoBase
      * Retorna as áreas de concentração ativas dos programas de pós-graduação da unidade.
      * Se informado o código do curso (programa), retorna apenas as áreas deste curso.
      *
-     * @param int $codundclgi - código da Unidade
-     * @param int $codcur - código do curso de pós-graduação
+     * @param int|null $codundclgi - código da Unidade
+     * @param int|null $codcur - código do curso de pós-graduação
      * @return type
      *
      * por Erickson Zanon - czanon@usp.br
      */
-    protected static function _areasProgramas(int $codundclgi = null, int $codcur = null)
+    protected static function _areasProgramas(int|null $codundclgi, int|null $codcur)
     {
         if (!$codundclgi) {
             $codundclgi = getenv('REPLICADO_CODUNDCLG');
@@ -369,12 +369,12 @@ class Posgraduacao extends ReplicadoBase
      *  indexados pela área (codare).
      * Se codare não foi determinado, busca todas as áreas do programa.
      *
-     * @param Int $codundclgi - código da unidade
-     * @param Int $codcur - código do curso/programa
-     * @param Int $codare - código da área (opcional)
+     * @param int $codundclgi - código da unidade
+     * @param int $codcur - código do curso/programa
+     * @param int|null $codare - código da área (opcional)
      * @return Array
      */
-    protected static function _alunosPrograma(int $codundclgi, int $codcur, int $codare = null)
+    protected static function _alunosPrograma(int $codundclgi, int $codcur, int|null $codare)
     {
         // se $codare é null, seleciona todas
         if (!$codare) {
@@ -737,7 +737,7 @@ class Posgraduacao extends ReplicadoBase
 
         $query = DB::getQuery('Posgraduacao.listarDefesas.sql');
         $query = str_replace('__unidades__', getenv('REPLICADO_CODUNDCLG'), $query);
-        
+
         $param = [
             'inicio' => $intervalo['inicio'],
             'fim' => $intervalo['fim'],
@@ -831,7 +831,7 @@ class Posgraduacao extends ReplicadoBase
         $codclg = getenv('REPLICADO_CODUNDCLG');
 
         $query = "SELECT d.*
-                  FROM 
+                  FROM
                   (
                     SELECT MAX(numseqdis) AS numseqdis, sgldis
                     FROM dbo.DISCIPLINA
@@ -840,7 +840,7 @@ class Posgraduacao extends ReplicadoBase
                   JOIN AREA ON AREA.codare = d.codare
                   JOIN CURSO ON CURSO.codcur = AREA.codcur
                   WHERE CURSO.codclg IN ({$codclg})
-                    AND d.dtadtvdis IS NULL 
+                    AND d.dtadtvdis IS NULL
                   ORDER BY d.nomdis ASC";
 
         return DB::fetchAll($query);

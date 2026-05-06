@@ -10,8 +10,8 @@ class Pessoa extends ReplicadoBase
      *
      * O campos $fields é opcional.
      *
-     * @param Integer $codpes
-     * @param Array $fields
+     * @param int $codpes
+     * @param array $fields
      * @return Array
      */
     protected static function _dump(int $codpes, array $fields = ['*'])
@@ -150,7 +150,7 @@ class Pessoa extends ReplicadoBase
      * @author Marcelo A K Fontana, atualizado em 01/10/2024
      * @author Marcelo A K Fontana, atualizado em 22/11/2024
      */
-    protected static function _procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string $tipvin = null, string $codundclgs = null, string $tipvinext = null)
+    protected static function _procurarPorNome(string $nome, bool $fonetico = true, bool $ativos = true, string|null $tipvin, string|null $codundclgs, string|null $tipvinext)
     {
         if ($fonetico) {
             $nome = Uteis::fonetico($nome);
@@ -692,7 +692,7 @@ class Pessoa extends ReplicadoBase
     /**
      * Método para retornar data de nascimento de uma pessoa, com base no seu número USP ($codpes)
      *
-     * @param Integer $codpes
+     * @param int $codpes
      * @return void
      */
     protected static function _nascimento($codpes)
@@ -805,7 +805,7 @@ class Pessoa extends ReplicadoBase
      * @author Refatorado por @gabrielareisg - 30/04/2021 - issue #425
      *
      */
-    protected static function _listarDocentes(string $codset_list = null, string $sitatl_list = 'A')
+    protected static function _listarDocentes(string|null $codset_list, string $sitatl_list = 'A')
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
         $where_setores = $codset_list ? "AND L.codset IN ({$codset_list})" : '';
@@ -1019,7 +1019,6 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _retornarEmailUsp(int $codpes)
     {
-        $unidades = getenv('REPLICADO_CODUNDCLG');
         $query = DB::getQuery('Pessoa.retornarEmailUsp.sql');
 
         $param = [
@@ -1260,7 +1259,7 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _nome($nome)
     {
-        return self::_procurarPorNome($nome, false, false);
+        return self::_procurarPorNome($nome, false, false, false, false, false);
     }
 
     /**
@@ -1272,14 +1271,14 @@ class Pessoa extends ReplicadoBase
      */
     protected static function _nomeFonetico($nome)
     {
-        return self::_procurarPorNome($nome, true, false);
+        return self::_procurarPorNome($nome, true, false, false, false, false);
     }
 
     /**
      * (deprecated) Método que lista siglas dos vínculos ativos de uma pessoa, em uma dada unidade
      *
-     * @param Integer $codpes
-     * @param Integer (opt) $codundclgi
+     * @param int $codpes
+     * @param int (opt) $codundclgi
      * @return array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      * @deprecated em favor de obterSiglasVinculosAtivos, em 25/06/2021 - @thiagogomesverissimo
@@ -1292,8 +1291,8 @@ class Pessoa extends ReplicadoBase
     /**
      * (deprecated) Método para retornar siglas dos setores que uma pessoa tem vínculo
      *
-     * @param Integer $codpes
-     * @param Integer $codundclgi
+     * @param int $codpes
+     * @param int $codundclgi
      * @return array
      * @author Alessandro Costa de Oliveira em 04/03/2021. Bug fix para aceitar a chamada sem o código de unidade
      * @deprecated em favor de obterSiglasSetoresAtivos, em 25/06/2021 - @thiagogomesverissimo
@@ -1306,7 +1305,7 @@ class Pessoa extends ReplicadoBase
     /**
      * (deprecated) Método que recebe número USP para retornar email USP da pessoa
      *
-     * @param Integer $codpes
+     * @param int $codpes
      * @return String
      * @deprecated em favor de retornarEmailUsp, em 25/06/2021 - @thiagogomesverissimo
      */
@@ -1335,7 +1334,7 @@ class Pessoa extends ReplicadoBase
      * Também Docente Aposentado
      *
      * @param Integer $codpes
-     * @param (opt) $codundclgi
+     * @param string $codundclgi
      * @deprecated em favor de listarVinculosSetores, em 19/09/2022 - @alecostaweb
      * @return array
      */

@@ -33,10 +33,10 @@ class Graduacao extends ReplicadoBase
      * Se informado parteNome, será usado para fazer uma busca fonética no nome.
      * Substitui o método ativos()
      *
-     * @param Int $codCur (opcional)
+     * @param int $codCur (opcional)
      * @param Int $anoIngresso (opcional)
-     * @param String $parteNome (opcional)
-     * @return Array codpes, nompes, codema, codcur, nomcur, codhab, nomhab, dtainivin
+     * @param string $parteNome (opcional)
+     * @return array codpes, nompes, codema, codcur, nomcur, codhab, nomhab, dtainivin
      * @author Masaki K Neto, em 13/10/2021, #475
      */
     protected static function _listarAtivos($codCur = null, $anoIngresso = null, $parteNome = null)
@@ -78,7 +78,7 @@ class Graduacao extends ReplicadoBase
     /**
      * Retorna contagem de alunos ativos na unidade
      *
-     * @return Integer
+     * @return int
      * @author Masaki K Neto, em 13/10/2021, #475
      */
     protected static function _contarAtivos()
@@ -98,7 +98,7 @@ class Graduacao extends ReplicadoBase
      * Caso o aluno não esteja cursando, retorna array vazio
      * Substitui método curso
      *
-     * @param Int $codpes
+     * @param int $codpes
      * @return Array (codpes, nompes, codcur, nomcur, codhab, nomhab, dtainivin, codcurgrd)
      * @author Masakik, adaptado em 8/11/2022
      */
@@ -443,7 +443,7 @@ class Graduacao extends ReplicadoBase
     protected static function _contarAtivosPorGenero($sexpes, $codcur = null)
     {
         $unidades = getenv('REPLICADO_CODUNDCLG');
-        $query = "SELECT COUNT (DISTINCT L.codpes) 
+        $query = "SELECT COUNT (DISTINCT L.codpes)
                   FROM LOCALIZAPESSOA L
                       INNER JOIN PESSOA P ON P.codpes = L.codpes
                       INNER JOIN HABILPROGGR H ON H.codpes = L.codpes
@@ -665,7 +665,7 @@ class Graduacao extends ReplicadoBase
      * @return Array
      * @author Masaki K Neto em 17/02/2022
      **/
-    protected static function _listarDisciplinasAluno(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _listarDisciplinasAluno(int $codpes, int|null $codpgm, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $query = DB::getQuery('Graduacao.listarDisciplinasAluno.sql');
         $param['codpes'] = $codpes;
@@ -702,8 +702,8 @@ class Graduacao extends ReplicadoBase
      *
      * Método comum que é chamado por obterMediaPonderadaLimpa e obterMediaPonderadaSuja.
      *
-     * @param Integer $codpes
-     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @param Int $codpes
+     * @param Int|Null $codpgm Código que identifica cada programa do aluno.
      * @param Array $rstfim ['A'] - média limpa ou ['A','RN','RA','RF'] - média suja (default)
      * @return Float Arredondado para 1 casa decimal.
      * @author gabrielareisg em 14/06/2021
@@ -711,7 +711,7 @@ class Graduacao extends ReplicadoBase
      * @author modificado por Masakik em 18/2/2022
      * @see self::_listarDisciplinasAluno()
      */
-    protected static function _obterMediaPonderada(int $codpes, int $codpgm = null, array $rstfim = ['A', 'RN', 'RA', 'RF'])
+    protected static function _obterMediaPonderada(int $codpes, int|null $codpgm, array $rstfim = ['A', 'RN', 'RA', 'RF'])
     {
         $result = self::_listarDisciplinasAluno($codpes, $codpgm, $rstfim);
 
@@ -735,12 +735,12 @@ class Graduacao extends ReplicadoBase
      * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes.
      * Deve modificar a configuração do cache se for conveniente.
      *
-     * @param Integer $codpes
-     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @param int $codpes
+     * @param int|null $codpgm Código que identifica cada programa do aluno.
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    protected static function _obterMediaPonderadaLimpa(int $codpes, int $codpgm = null)
+    protected static function _obterMediaPonderadaLimpa(int $codpes, int|null $codpgm)
     {
         return self::_obterMediaPonderada($codpes, $codpgm, ['A']);
     }
@@ -755,12 +755,12 @@ class Graduacao extends ReplicadoBase
      * OBS.: Este método não utiliza o cache na configuração padrão pois o retorno ocupa poucos bytes.
      * Deve modificar a configuração do cache se for conveniente.
      *
-     * @param Integer $codpes
-     * @param Integer $codpgm Código que identifica cada programa do aluno.
+     * @param int $codpes
+     * @param int $codpgm Código que identifica cada programa do aluno.
      * @return string
      * @author thiagogomesverissimo em 21/11/2021
      */
-    protected static function _obterMediaPonderadaSuja(int $codpes, int $codpgm = null)
+    protected static function _obterMediaPonderadaSuja(int $codpes, int|null $codpgm)
     {
         return self::_obterMediaPonderada($codpes, $codpgm, ['A', 'RN', 'RA', 'RF']);
     }
@@ -801,7 +801,7 @@ class Graduacao extends ReplicadoBase
      * Retorna lista com os cursos de graduação da unidade.
      *
      * @return Array
-     * @author Alessandro Costa de Oliveira, em 01/04/2026 
+     * @author Alessandro Costa de Oliveira, em 01/04/2026
      */
     protected static function _listarCursos()
     {
@@ -840,7 +840,7 @@ class Graduacao extends ReplicadoBase
         $query = " SELECT LOCALIZAPESSOA.* FROM LOCALIZAPESSOA";
         $query .= " WHERE LOCALIZAPESSOA.tipvin = 'ALUNOGR' AND LOCALIZAPESSOA.codundclg = convert(int,:codundclgi)";
         if (!is_null($parteNome)) {
-            $parteNome = trim(utf8_decode(Uteis::removeAcentos($parteNome)));
+            $parteNome = trim(mb_convert_encoding(Uteis::removeAcentos($parteNome), "ISO-8859-1", "UTF-8"));
             $parteNome = strtoupper(str_replace(' ', '%', $parteNome));
             $query .= " AND nompesfon LIKE :parteNome";
             $param['parteNome'] = '%' . Uteis::fonetico($parteNome) . '%';
