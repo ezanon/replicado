@@ -136,12 +136,12 @@ class Uteis
      * @example $inifim = Uteis::semestre();
      * @example $inifim = Uteis::semestre('2019-10-20');
      *
-     * @param  string $data_string (opcional) Data na qual vai buscar os limites do semestre.
+     * @param  string|null $data_string (opcional) Data na qual vai buscar os limites do semestre.
      *
      * @return Array formato ['yyymmdd', 'yyyymmdd']
      * @author Masaki K Neto, em algum dia de 2019
      */
-    public static function semestre(string $data_string = null)
+    public static function semestre(string|null $data_string)
     {
         $data = $data_string ? new \DateTime($data_string) : new \DateTime('now');
 
